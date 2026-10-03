@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NER SmartRoute AI</title>
+
+    <!-- Leaflet Map -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <!-- Main CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ========================================= -->
+    <!-- OCEAN BACKGROUND -->
+    <!-- ========================================= -->
+
+    <div class="ocean-scene">
+
+        <div class="stars"></div>
+
+        <div class="route-line"></div>
+
+
+        <!-- MOVING CARGO SHIP -->
+
+        <div class="ship">
+
+            <div class="ship-body"></div>
+
+            <div class="ship-top"></div>
+
+            <div class="ship-window"></div>
+
+
+            <div class="container c1"></div>
+
+            <div class="container c2"></div>
+
+            <div class="container c3"></div>
+
+            <div class="container c4"></div>
+
+        </div>
+
+
+        <!-- OCEAN WAVES -->
+
+        <div class="wave wave1"></div>
+
+        <div class="wave wave2"></div>
+
+    </div>
+
+
+
+    <!-- ========================================= -->
+    <!-- MAIN APPLICATION -->
+    <!-- ========================================= -->
+
+    <div class="app-shell">
+
+
+        <!-- ========================================= -->
+        <!-- HEADER -->
+        <!-- ========================================= -->
+
+        <header class="top-header">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    SR
+                </div>
+
+
+                <div>
+
+                    <h1>
+                        NER SmartRoute AI
+                    </h1>
+
+                    <p>
+                        AI-Based Logistics and Accessibility Intelligence
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="status">
+
+                <span class="status-dot"></span>
+
+                AI SYSTEM ONLINE
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ========================================= -->
+        <!-- HERO -->
+        <!-- ========================================= -->
+
+        <section class="hero">
+
+
+            <div class="hero-content">
+
+
+                <span class="hero-label">
+
+                    NORTH EASTERN REGION
+
+                </span>
+
+
+                <h2>
+
+                    Intelligent Logistics
+                    <br>
+
+                    <span>
+                        Route Intelligence
+                    </span>
+
+                </h2>
+
+
+                <p>
+
+                    Analyze route accessibility,
+                    travel time, logistics cost
+                    and disruption risk using AI.
+
+                </p>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ========================================= -->
+        <!-- SHIPMENT ANALYSIS -->
+        <!-- ========================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-title">
+
+
+                <div>
+
+                    <h2>
+                        Shipment Analysis
+                    </h2>
+
+
+                    <p>
+
+                        Enter shipment details to generate
+                        an intelligent route recommendation.
+
+                    </p>
+
+                </div>
+
+
+                <div class="panel-badge">
+
+                    AI ROUTING
+
+                </div>
+
+            </div>
+
+
+
+            <!-- INPUT GRID -->
+
+            <div class="form-grid">
+
+
+                <!-- SOURCE -->
+
+                <div class="input-group">
+
+                    <label for="source">
+
+                        SOURCE
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="source"
+                        placeholder="Example: Guwahati"
+                    >
+
+                </div>
+
+
+
+                <!-- DESTINATION -->
+
+                <div class="input-group">
+
+                    <label for="destination">
+
+                        DESTINATION
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="destination"
+                        placeholder="Example: Aizawl"
+                    >
+
+                </div>
+
+
+
+                <!-- CARGO -->
+
+                <div class="input-group">
+
+                    <label for="cargo">
+
+                        CARGO TYPE
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="cargo"
+                        placeholder="Example: Medicine"
+                    >
+
+                </div>
+
+
+
+                <!-- WEIGHT -->
+
+                <div class="input-group">
+
+                    <label for="weight">
+
+                        WEIGHT
+
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="weight"
+                        placeholder="Weight in kg"
+                        min="1"
+                    >
+
+                </div>
+
+
+
+                <!-- PRIORITY -->
+
+                <div class="input-group">
+
+                    <label for="priority">
+
+                        PRIORITY
+
+                    </label>
+
+
+                    <select id="priority">
+
+                        <option value="Normal">
+                            Normal
+                        </option>
+
+
+                        <option value="High">
+                            High
+                        </option>
+
+
+                        <option value="Emergency">
+                            Emergency
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ANALYZE BUTTON -->
+
+            <button
+                class="analyze-btn"
+                onclick="analyzeRoute()"
+            >
+
+                ANALYZE ROUTE
+
+            </button>
+
+
+        </section>
+
+
+
+        <!-- ========================================= -->
+        <!-- INTERACTIVE MAP -->
+        <!-- ========================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-title">
+
+
+                <div>
+
+                    <h2>
+                        Interactive Route Map
+                    </h2>
+
+
+                    <p>
+
+                        Visualize the selected
+                        logistics corridor.
+
+                    </p>
+
+                </div>
+
+
+                <div class="panel-badge">
+
+                    LIVE MAP
+
+                </div>
+
+            </div>
+
+
+
+            <div
+                id="map"
+                style="
+                    width:100%;
+                    height:380px;
+                    border-radius:18px;
+                    overflow:hidden;
+                "
+            ></div>
+
+
+        </section>
+
+
+
+        <!-- ========================================= -->
+        <!-- AI RESULT -->
+        <!-- ========================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-title">
+
+
+                <div>
+
+                    <h2>
+                        AI Route Intelligence
+                    </h2>
+
+
+                    <p>
+                        Smart logistics analysis
+                    </p>
+
+                </div>
+
+
+                <div class="panel-badge">
+
+                    AI ANALYSIS
+
+                </div>
+
+            </div>
+
+
+
+            <div id="result">
+
+
+                <div class="empty-result">
+
+
+                    <div class="radar">
+
+                        <div class="radar-ring ring1"></div>
+
+                        <div class="radar-ring ring2"></div>
+
+                        <div class="radar-dot"></div>
+
+                    </div>
+
+
+                    <h3>
+
+                        Ready for Analysis
+
+                    </h3>
+
+
+                    <p>
+
+                        Enter shipment details and click
+                        Analyze Route.
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ========================================= -->
+        <!-- SYSTEM FEATURES -->
+        <!-- ========================================= -->
+
+        <section class="feature-grid">
+
+
+            <!-- FEATURE 1 -->
+
+            <div class="feature-card">
+
+
+                <div class="feature-number">
+                    01
+                </div>
+
+
+                <h3>
+
+                    Route Intelligence
+
+                </h3>
+
+
+                <p>
+
+                    AI-assisted route recommendation
+                    based on logistics parameters.
+
+                </p>
+
+
+            </div>
+
+
+
+            <!-- FEATURE 2 -->
+
+            <div class="feature-card">
+
+
+                <div class="feature-number">
+                    02
+                </div>
+
+
+                <h3>
+
+                    Accessibility Analysis
+
+                </h3>
+
+
+                <p>
+
+                    Analyze roads, terrain,
+                    connectivity and disruption factors.
+
+                </p>
+
+
+            </div>
+
+
+
+            <!-- FEATURE 3 -->
+
+            <div class="feature-card">
+
+
+                <div class="feature-number">
+                    03
+                </div>
+
+
+                <h3>
+
+                    Risk Prediction
+
+                </h3>
+
+
+                <p>
+
+                    Machine learning model estimates
+                    route risk from shipment conditions.
+
+                </p>
+
+
+            </div>
+
+
+
+            <!-- FEATURE 4 -->
+
+            <div class="feature-card">
+
+
+                <div class="feature-number">
+                    04
+                </div>
+
+
+                <h3>
+
+                    Alternative Routes
+
+                </h3>
+
+
+                <p>
+
+                    Provides an alternative logistics
+                    corridor for better planning.
+
+                </p>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ========================================= -->
+        <!-- FOOTER -->
+        <!-- ========================================= -->
+
+        <footer>
+
+
+            <div>
+
+                NER SmartRoute AI
+
+            </div>
+
+
+            <div>
+
+                AI Logistics Intelligence Platform
+
+            </div>
+
+
+        </footer>
+
+
+    </div>
+
+
+
+    <!-- ========================================= -->
+    <!-- LEAFLET JS -->
+    <!-- ========================================= -->
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+
+
+    <!-- ========================================= -->
+    <!-- YOUR EXISTING JAVASCRIPT -->
+    <!-- ========================================= -->
+
+    <script
+        src="{{ url_for('static', filename='script.js') }}">
+    </script>
+
+
+
+    <!-- ========================================= -->
+    <!-- MAP -->
+    <!-- ========================================= -->
+
+    <script>
+
+        const map = L.map("map").setView(
+            [25.5788, 91.8933],
+            6
+        );
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+
+                attribution:
+                    "&copy; OpenStreetMap contributors"
+            }
+        ).addTo(map);
+
+
+
+        /* GUWAHATI */
+
+        const guwahati = [
+            26.1445,
+            91.7362
+        ];
+
+
+
+        /* SILCHAR */
+
+        const silchar = [
+            24.8333,
+            92.7789
+        ];
+
+
+
+        /* AIZAWL */
+
+        const aizawl = [
+            23.7271,
+            92.7176
+        ];
+
+
+
+        /* SOURCE MARKER */
+
+        L.marker(guwahati)
+            .addTo(map)
+            .bindPopup(
+                "Guwahati - Source"
+            );
+
+
+
+        /* ROUTE HUB */
+
+        L.marker(silchar)
+            .addTo(map)
+            .bindPopup(
+                "Silchar - Route Hub"
+            );
+
+
+
+        /* DESTINATION */
+
+        L.marker(aizawl)
+            .addTo(map)
+            .bindPopup(
+                "Aizawl - Destination"
+            );
+
+
+
+        /* ROUTE LINE */
+
+        const routeLine = L.polyline(
+            [
+                guwahati,
+                silchar,
+                aizawl
+            ],
+            {
+                weight: 5
+            }
+        ).addTo(map);
+
+
+
+        /* FIT MAP */
+
+        map.fitBounds(
+            routeLine.getBounds(),
+            {
+                padding: [
+                    30,
+                    30
+                ]
+            }
+        );
+
+    </script>
+
+
+</body>
+
+</html>
